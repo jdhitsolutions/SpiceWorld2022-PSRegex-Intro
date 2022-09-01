@@ -1,7 +1,11 @@
 #requires -version 5.1
 
 #the value should be less than or equal to the key
-$global:Redacted = @{$env:COMPUTERNAME = "REDACTED";"Jeff Hicks"="Roy Biv";"Jeff"="Roy" }
+$global:Redacted = @{
+Prospero = "REDACTED"
+"Jeff Hicks" = "Roy Biv"
+Jeff = "Roy" 
+}
 
 Function Out-Redacted {
     [cmdletbinding()]
@@ -29,7 +33,7 @@ Function Out-Redacted {
 
     End {
         #take the data in $in and create an array of strings
-        $out = ($in | Out-String).Split("`r`n")
+        $out = ($in | Out-String).Split("`n")
         Write-Verbose "Processing $($out.count) lines"
         foreach ($item in $redacted.getenumerator()) {
             [regex]$r = "(\b)?$($item.key)(\S+)?(\b)?"
@@ -41,7 +45,7 @@ Function Out-Redacted {
                 #update the output string
                 $out =  $out -replace $fix.value, $new
             } #foreach fix
-        } #foreach redact item
+        } #foreach redacted item
 
         #write the string result
         $out

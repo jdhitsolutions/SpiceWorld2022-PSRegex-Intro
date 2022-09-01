@@ -1,4 +1,4 @@
-#Demo-RegularExpressions.ps1
+# Demo-RegularExpressions.ps1
 
 return "This is a demo script file."
 
@@ -26,14 +26,15 @@ cls
 #view matches
 $matches
 
-"PowerShell" -match "pOw"
+#not case-sensitive
+"PowerShell" -match "pOW"
 $matches
 
 #match any single character
 $names = "dan","dean","don","ladonna","DON","dane","dun","jeff","jdin" 
 $names | where {$_ -match "d.n"}
 
-#what about dane and ladonna?
+#what happened with names like dane and ladonna?
 $names | where {$_ -match "^d.n"}
 $names | where {$_ -match "d.n$"}
 $names | where {$_ -match "^d.n$"}
@@ -53,7 +54,7 @@ $matches
 $matches
 
 #one or more
-"owerShell" -match "^\w+"
+"PowerShell" -match "^\w+"
 $matches
 
 #multiple choice
@@ -64,9 +65,13 @@ $matches
 "ZowerShell" -match "[tpw]ower"
 $matches
 
+cls
+
 #matching stops at first non-match
 "Power Shell" -match "\w+"
 $matches
+
+cls
 
 #qualifiers
 "#323#" -match "\d{2}"
@@ -86,8 +91,10 @@ $ip | where {$_ -match $pattern}
 #escaping the slash
 
 "\\server01\public" -match "\\\w+\\w+"
+
 "\\server01\public" -match "\\"
 $matches
+
 "\\server01\public" -match "\\\\"
 $matches
 
@@ -99,39 +106,44 @@ $matches
 
 $unc = "\\server-01-test\public","\\server02\data",
 "\\server 01\foo","\\server-01:test\public","\\server_x-23-33\data"
+# \S matches any non-whitespace
 $unc -match "\\\\\S+\\\w+"
 
+#refine with a set
 $unc -match "\\\\[a-zA-Z\d\-_]+\\\w+"
 
+#notmatch
 $unc -notmatch "\\\\[a-zA-Z\d\-_]+\\\w+"
 
-#notmatch
-
+cls
 #endregion
 
 #region using Select-String
 
 #powershell 7 includes highlighting
-dir c:\scripts\*.ps1 | select-string 'requires -version 2.0' -OutVariable v
-$v | get-member
-$v[0] | select *
-$old = dir c:\scripts\*.ps1 | select-string 'requires -version [345\.0]'
+dir c:\scripts\*.ps1 | Select-String 'requires -version 2.0' -OutVariable v
+$v | Get-Member
+$v[0] | Select-Object *
+$old = dir c:\scripts\*.ps1 | Select-String 'requires -version [345\.0]'
 $old[0..9]
-$old | group {$_.matches.value} -NoElement
+$old | Group-Object {$_.matches.value} -NoElement
 
 #ov is an alias for the common OutVariable parameter
-dir c:\scripts\*.ps1 | select-string 'requires -version \d(\.\d)?' -ov r | Group {$_.matches.value} -NoElement -ov g
+# (\.\d)? match an optional pattern
+dir c:\scripts\*.ps1 -ov f | Select-String 'requires -version \d(\.\d)?' -ov r | Group-Object {$_.matches.value} -NoElement -ov g
 #handle casing
-dir c:\scripts\*.ps1 | select-string 'requires -version \d(\.\d)?' -ov r | Group {$_.matches.value.tolower()} -NoElement -ov g
+$f | Select-String 'requires -version \d(\.\d)?' -ov r | Group-Object {$_.matches.value.tolower()} -NoElement -ov g
 
-#group my major version
-dir c:\scripts\*.ps1 | select-string 'requires -version \d' | Group {$_.matches.value.tolower()}
+#group by major version
+$f | select-string 'requires -version \d' | Group {$_.matches.value.tolower()}
 
 help Select-String -full
 
+cls
 #endregion
 
 #region using Switch
+
 $phone="(315) 456-7890"
 
 Switch -regex ($phone) {
@@ -149,37 +161,51 @@ cls
 #region split
 
 help about_split
+
+#single character
 $a = "192.168.5.100"
 $a | get-member split
 $a.split(".")
 
-$b = "jeff345foo387jason"
+#be careful
+$aa = "abc##def##ghi##jkl"
+$aa.split("##") | Measure-Object
+
+#regex pattern
+$aa -split "##"
+
+$b = "jeff345foo687jason"
 $b -split "\d{3}"
 
-#this won't work
+#this won't work the way you think
 $b -split "\d"
+
+#there is always a workaround
+$b -split "\d" | where {$_ -match "\w+"}
 
 cls
 #endregion
 
 #region replace
+
 help about_Comparison_Operators
 
-#method - not regular expression...
+#method - not using regular expressions ...
 $c = "Jeff"
 $c.Replace.OverloadDefinitions
-#... but it is case-sensitive 
+# ... but it is case-sensitive 
 $c.replace("F","x")
 $c.replace("f","x")
 
+# -Replace operator is regex-aware
 #powershell is not case-sensitive
 $c -replace "F","X"
 #use patterns
 $b -replace "\d{3}","---"
 
+$text = "Discovered domain controller DC-NYC-12"
 $mask = "DC-((PHI)|(NYC))-\d+"
 #DC-PHI-123 or DC-NYC-2
-$text = "Discovered domain controller DC-NYC-12"
 $text -replace $mask,"*"
 
 if ($text -match $mask) {
@@ -192,17 +218,25 @@ else {
 
 #an advanced example using the .NET regex class
 psedit .\out-redacted.ps1
+
+#this looks nicer in the console than the ISE
+#launching Windows Terminal
+ wt nt -d . -p "Windows PowerShell"
 . .\out-redacted.ps1
-#this works better in the console than the ISE
-get-winevent -FilterHashtable @{logname="Security";id=4648} -MaxEvents 1 | select -ExpandProperty message | out-redacted
+
+$splat = @{
+ FilterHashtable = @{logname="Security";id=4648}
+ MaxEvents = 1
+ ComputerName = "prospero" 
+ Credential =  "jeff"
+}
+Get-WinEvent @splat | Select-Object -ExpandProperty message | Out-Redacted
 
 cls
 
 #endregion 
 
 #region parameter validation
-
-get-sharedata \\localhost\scripts#region parameter validation
 
 psedit .\Demo-ValidatePattern.ps1
 . .\Demo-ValidatePattern.ps1
@@ -214,7 +248,8 @@ get-sharedata "\\local host\scripts"
 psedit .\Convert-HTMLtoANSI.ps1
 . .\Convert-HTMLtoANSI.ps1
 
-"#123FF00","#CC-00F","#FFF000" | Convert-HtmlToAnsi
+"#123FF00","#CC-00F","#FFF000" | Convert-HtmlToAnsi -ErrorAction SilentlyContinue
+$error[0..1]
 
 cls
 
@@ -222,7 +257,8 @@ cls
 
 #region online testing
 
-# Patterns: \bERR\b, \d{4}-\d{2}-\d{2}\s(\d{2}:){2}\d{2}Z
+# Pattern: \bERR\b
+# Pattern: \d{4}-\d{2}-\d{2}\s(\d{2}:){2}\d{2}Z
 # Data: get-content .\demolog.txt | set-clipboard
 
 start https://rubular.com

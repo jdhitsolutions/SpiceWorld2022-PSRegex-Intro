@@ -1,7 +1,7 @@
 
 return "This is a demo script file."
 
-#region Subexpressions and named matches
+#region Sub-Expressions and named matches
 
 "aaa 123 bbb 456" -match "\d{3}"
 $matches

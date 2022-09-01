@@ -1,5 +1,7 @@
 # Unlocking the Power of Regular Expressions with PowerShell
 
+![spiceworld 2022](images/spiceworld2022.png)
+
 The items in this repository include my presentation and demonstration materials for my session on getting started with regular expressions and PowerShell. The session was part of [Spiceworld 2022](https://www.spiceworks.com/spiceworld/).
 
 ## Abstract
@@ -8,7 +10,7 @@ _Using regular expressions is a skill every IT Pro should have in their toolbox.
 
 > All material is offered as-is and should be considered educational material. __Nothing in this repository should be considered production-ready__.
 
-## Learn More
+## Learn More :mortar_board:
 
 + [Regular Expressions Info](https://www.regular-expressions.info
 )
