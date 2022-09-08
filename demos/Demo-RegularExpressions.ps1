@@ -1,5 +1,11 @@
 # Demo-RegularExpressions.ps1
 
+<#
+sd
+new-psdrivehere . -cd
+cls
+#>
+
 return "This is a demo script file."
 
 #region read the help
@@ -240,7 +246,9 @@ cls
 
 psedit .\Demo-ValidatePattern.ps1
 . .\Demo-ValidatePattern.ps1
+#pass
 get-sharedata \\localhost\scripts
+#fail
 get-sharedata "\\local host\scripts"
 
 "\\foo\bar","bad\sharename","\\srv1\public","\\srv-32-nyc\sales" | Get-ShareData 
