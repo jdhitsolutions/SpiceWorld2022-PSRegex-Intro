@@ -1,5 +1,7 @@
 # Demo-RegularExpressions.ps1
 
+# https://github.com/jdhitsolutions/SpiceWorld2022-PSRegex-Intro
+
 <#
 sd
 new-psdrivehere . -cd
@@ -141,7 +143,7 @@ dir c:\scripts\*.ps1 -ov f | Select-String 'requires -version \d(\.\d)?' -ov r |
 $f | Select-String 'requires -version \d(\.\d)?' -ov r | Group-Object {$_.matches.value.tolower()} -NoElement -ov g
 
 #group by major version
-$f | select-string 'requires -version \d' | Group {$_.matches.value.tolower()}
+$f | Select-String 'requires -version \d' | Group {$_.matches.value.tolower()}
 
 help Select-String -full
 
@@ -150,7 +152,7 @@ cls
 
 #region using Switch
 
-$phone="(315) 456-7890"
+$phone="(202) 867-5309"
 
 Switch -regex ($phone) {
  "^\(\d{3}\)\s\d{3}-\d{4}$" {Write-Host "$phone is a valid phone number" -ForegroundColor green;break}
@@ -233,7 +235,7 @@ psedit .\out-redacted.ps1
 $splat = @{
  FilterHashtable = @{logname="Security";id=4648}
  MaxEvents = 1
- ComputerName = "prospero" 
+ ComputerName = $env:computername 
  Credential =  "jeff"
 }
 Get-WinEvent @splat | Select-Object -ExpandProperty message | Out-Redacted
