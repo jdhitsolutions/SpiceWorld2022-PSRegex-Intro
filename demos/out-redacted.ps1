@@ -3,6 +3,7 @@
 #the value should be less than or equal to the key
 $global:Redacted = @{
 Prospero = "REDACTED"
+"Thinkx1-jh" = "REDACTED"
 "Jeff Hicks" = "Roy Biv"
 Jeff = "Roy" 
 }
